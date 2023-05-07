@@ -53,7 +53,7 @@ runs:
     - name: Create export presets config
       if: ${{ inputs.create-export-preset-cfg  == 'true' }}
       shell: bash
-      run: cp export_presets_template.cfg ${{ inputs.working-directory }}/export_presets.cfg
+      run: cp ${{ github.action_path }}/export_presets_template.cfg ${{ inputs.working-directory }}/export_presets.cfg
 
     - name: debug export_presets.cfg
       shell: bash
