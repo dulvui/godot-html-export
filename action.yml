@@ -53,7 +53,8 @@ runs:
     - name: Create export presets config
       if: ${{ inputs.create-export-preset-cfg  == 'true' }}
       shell: bash
-      run: |
+      env:
+        CONFIG: |
           [preset.1]
 
           name="HTML5"
@@ -66,6 +67,7 @@ runs:
           export_path="html5/index.html"
           script_export_mode=1
           script_encryption_key=""
+      run: echo $CONFIG >> ${{ inputs.working-directory }}/export_presets.cfg
 
     - name: Export
       shell: bash
