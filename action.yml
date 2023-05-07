@@ -89,8 +89,11 @@ runs:
           progressive_web_app/icon_180x180=""
           progressive_web_app/icon_512x512=""
           progressive_web_app/background_color=Color( 0, 0, 0, 1 )
-
-      run: echo -e $CONFIG > ${{ inputs.working-directory }}/export_presets.cfg
+      run: |
+          CONFIG="${CONFIG//'%'/'%25'}"               # Multiline escape sequences for %
+          CONFIG="${CONFIG//$'\n'/'%0A'}"             # Multiline escape sequences for '\n'
+          CONFIG="${CONFIG//$'\CONFIG'/'%0D'}"        # Multiline escape sequences for '\r'
+          echo -e $CONFIG > ${{ inputs.working-directory }}/export_presets.cfg
 
     - name: debug export_presets.cfg
       shell: bash
