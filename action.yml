@@ -1,0 +1,72 @@
+
+name: 'Godot HTML5 Export'
+description: 'Godot Engine: HTML5 export'
+author: 'Simon Dalvai @dulvui'
+branding:
+  color: red
+  icon: upload-cloud
+
+inputs:
+  working-directory:
+    description: 'The working directory'
+    required: false
+    default: '.'
+  create-export-preset-cfg:
+    description: 'Set true if a simple export_presets.cfg should be created'
+    required: false
+    default: true
+  godot-version:
+    description: 'Godot Engine version'
+    required: false
+    default: '3.5.2'
+  
+runs:
+  using: "composite"
+  steps:
+
+    - name: Cache Godot files
+      id: cache-godot
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.local/share/godot/**
+          /usr/local/bin/godot
+          ~/.config/godot/**
+        key: ${{ runner.os }}-godot-${{ inputs.godot-version }}
+
+    - name: Download and config Godot Engine headless linux server and templates
+      if: steps.cache-godot.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
+        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
+        mkdir ~/.cache
+        mkdir -p ~/.config/godot
+        mkdir -p ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
+        unzip Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
+        mv Godot_v${{ inputs.godot-version }}-stable_linux_headless.64 /usr/local/bin/godot
+        unzip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
+        mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
+        rm -f Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
+        godot -e -q
+
+    - name: Create export presets config
+      if: ${{ inputs.create-export-preset-cfg  == 'true' }}
+      shell: bash
+      run: |
+          [preset.1]
+
+          name="HTML5"
+          platform="HTML5"
+          runnable=true
+          custom_features=""
+          export_filter="all_resources"
+          include_filter=""
+          exclude_filter=""
+          export_path="html5/index.html"
+          script_export_mode=1
+          script_encryption_key=""
+
+    - name: Export
+      shell: bash
+      run: godot --path ${{ inputs.working-directory }} --export HTML5
