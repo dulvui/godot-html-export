@@ -91,9 +91,9 @@ runs:
           progressive_web_app/background_color=Color( 0, 0, 0, 1 )
       run: echo $CONFIG > ${{ inputs.working-directory }}/export_presets.cfg
 
-    run: debug export_presets.cfg
-    shell: bash
-    run: cat ${{ inputs.working-directory }}/export_presets.cfg
+    - name: debug export_presets.cfg
+      shell: bash
+      run: cat ${{ inputs.working-directory }}/export_presets.cfg
 
     - name: Export
       shell: bash
