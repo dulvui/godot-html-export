@@ -57,4 +57,4 @@ runs:
 
     - name: Export
       shell: bash
-      run: godot --headless --path ${{ inputs.working-directory }} --export-release HTML5 ../html5/index.html
+      run: godot --headless --path ${{ inputs.working-directory }} --export-release Web ../html5/index.html
