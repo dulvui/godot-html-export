@@ -38,16 +38,16 @@ runs:
       if: steps.cache-godot.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
+        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_linux.x86_64.zip
         wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         mkdir ~/.cache
         mkdir -p ~/.config/godot
         mkdir -p ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        unzip Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
-        mv Godot_v${{ inputs.godot-version }}-stable_linux_headless.64 /usr/local/bin/godot
+        unzip Godot_v${{ inputs.godot-version }}-stable_linux.x86_64.zip
+        mv Godot_v${{ inputs.godot-version }}-stable_linux.x86_64 /usr/local/bin/godot
         unzip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        rm -f Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
+        rm -f Godot_v${{ inputs.godot-version }}-stable_linux.x86_64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         godot -e -q
 
     - name: Create export presets config
@@ -57,4 +57,4 @@ runs:
 
     - name: Export
       shell: bash
-      run: godot --path ${{ inputs.working-directory }} --export HTML5 ../html5/index.html
+      run: godot --path --headless ${{ inputs.working-directory }} --export Web ../html5/index.html
