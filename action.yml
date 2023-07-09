@@ -48,7 +48,6 @@ runs:
         unzip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
         rm -f Godot_v${{ inputs.godot-version }}-stable_linux.x86_64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
-        godot -e -q
 
     - name: Create export presets config
       if: ${{ inputs.create-export-preset-cfg  == 'true' }}
