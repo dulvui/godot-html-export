@@ -18,7 +18,7 @@ If you are facing problems with the action or this README feels not complete, pu
 | ----|----------|---------|-------------|
 | working-directory | false | . | Path to project.godot file |
 | godot-create-export-preset-cfg | false | true | Set true if a simple export_presets.cfg should be created |
-| godot-version | false | 3.5.1 | Check versions [here](https://downloads.tuxfamily.org/godotengine/) |
+| godot-version | false | 4.1.1 | Check versions [here](https://downloads.tuxfamily.org/godotengine/) |
 
 
 ## Working examples
