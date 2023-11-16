@@ -1,6 +1,6 @@
 
-name: 'Godot 3 and 4 Web Export'
-description: 'Godot Engine: HTML5 export'
+name: 'Godot Engine 3.x Web Export'
+description: 'Godot Engine 3.x Web export'
 author: 'Simon Dalvai @dulvui'
 branding:
   color: red
@@ -11,14 +11,18 @@ inputs:
     description: 'The working directory'
     required: false
     default: '.'
+  output-file-path:
+    description: 'Path of the exported html files'
+    required: false
+    default: 'html5/index.html'
   create-export-preset-cfg:
     description: 'Set true if a simple export_presets.cfg should be created'
     required: false
     default: true
   godot-version:
-    description: 'Godot Engine version. Supported are 3.x and 4.x'
+    description: 'Godot Engine version'
     required: false
-    default: '4.1.1'
+    default: '3.5.3'
   
 runs:
   using: "composite"
@@ -34,26 +38,20 @@ runs:
           ~/.config/godot/**
         key: ${{ runner.os }}-godot-${{ inputs.godot-version }}
 
-    - name: Define URL_SUFFIX
-      run: |
-        [[ "3" = ${{ inputs.godot-version }}* ]] && echo "URL_SUFFIX=-stable_linux_headless.64.zip" >> $GITHUB_ENV
-        [[ "4" = ${{ inputs.godot-version }}* ]] && echo "URL_SUFFIX=-stable_linux.x86_64.zip" >> $GITHUB_ENV
-
-
     - name: Download and config Godot Engine headless linux server and templates
       if: steps.cache-godot.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}$URL_SUFFIX
+        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
         wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         mkdir ~/.cache
         mkdir -p ~/.config/godot
         mkdir -p ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        unzip Godot_v${{ inputs.godot-version }}$URL_SUFFIX
+        unzip Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
         mv Godot_v${{ inputs.godot-version }}-stable_linux_headless.64 /usr/local/bin/godot
         unzip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        rm -f Godot_v${{ inputs.godot-version }}$URL_SUFFIX Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
+        rm -f Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
         godot -e -q
 
     - name: Create export presets config
@@ -61,20 +59,10 @@ runs:
       shell: bash
       run: cp ${{ github.action_path }}/export_presets.cfg ${{ inputs.working-directory }}/export_presets.cfg
 
-
-    ########################
-    # GODOT 3.x
-    ########################
-    - name: Export
-      if: startsWith(inputs.godot-version, '3')
+    - name: Create export paths directory structure
       shell: bash
-      run: godot --path ${{ inputs.working-directory }} --export HTML5 ../html5/index.html
+      run: mkdir -p "$(dirname ${{ inputs.output-file-path }})"
 
-
-    ########################
-    # GODOT 4.x
-    ########################
     - name: Export
-      if: startsWith(inputs.godot-version, '4')
       shell: bash
-      run: godot --headless --path ${{ inputs.working-directory }} --export-release Web ../html5/index.html
+      run: godot --path ${{ inputs.working-directory }} --export HTML5 ${{ inputs.output-file-path }}
