@@ -2,6 +2,9 @@
 Github Action for Godot HTML5 export.  
 If you are facing problems with the action or this README feels not complete, pull requests are welcome or open an issue.
 
+Also available for Godot Engine 4.x here  
+https://github.com/dulvui/godot-4-html-export
+
 ## Table of contents
 - [godot-html-export](#godot-html-export)
   - [Table of contents](#table-of-contents)
