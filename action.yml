@@ -1,6 +1,6 @@
 
-name: 'Godot Engine 3.x Web Export'
-description: 'Godot Engine 3.x Web export'
+name: 'Godot Engine 3.x HTML5 Export'
+description: 'Godot Engine 3.x HTML5 export'
 author: 'Simon Dalvai @dulvui'
 branding:
   color: red
