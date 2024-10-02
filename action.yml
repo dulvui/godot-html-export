@@ -71,5 +71,4 @@ runs:
 
     - name: Export
       shell: bash
-      continue-on-error: true # Godot 3.6 throws error, but still works https://github.com/godotengine/godot/issues/80692
       run: godot --path ${{ inputs.working-directory }} --export HTML5 ${{ inputs.output-file-path }}
