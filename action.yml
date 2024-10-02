@@ -7,6 +7,13 @@ branding:
   icon: upload-cloud
 
 inputs:
+  godot-version:
+    description: 'Godot Engine version'
+    required: true
+  godot-channel:
+    description: 'Godot Engine release channel (stable, beta, rc1, rc2, rc3...). Defaults to stable'
+    required: false
+    default: 'stable'
   working-directory:
     description: 'The working directory'
     required: false
@@ -19,15 +26,11 @@ inputs:
     description: 'Set true if a simple export_presets.cfg should be created'
     required: false
     default: true
-  godot-version:
-    description: 'Godot Engine version'
-    required: false
-    default: '3.5.3'
   
 runs:
   using: "composite"
   steps:
-
+    
     - name: Cache Godot files
       id: cache-godot
       uses: actions/cache@v3
@@ -36,23 +39,23 @@ runs:
           ~/.local/share/godot/**
           /usr/local/bin/godot
           ~/.config/godot/**
-        key: ${{ runner.os }}-godot-${{ inputs.godot-version }}
+        key: ${{ runner.os }}-godot-${{ inputs.godot-version }}-${{ inputs.godot-channel }}
 
     - name: Download and config Godot Engine headless linux server and templates
       if: steps.cache-godot.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
-        wget -q https://downloads.tuxfamily.org/godotengine/${{ inputs.godot-version }}/Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
-        mkdir ~/.cache
+        wget -q https://github.com/godotengine/godot-builds/releases/download/${{ inputs.godot-version }}-${{ inputs.godot-channel}}/Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_linux.x86_64.zip
+        wget -q https://github.com/godotengine/godot-builds/releases/download/${{ inputs.godot-version }}-${{ inputs.godot-channel}}/Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_export_templates.tpz
+        unzip Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_linux.x86_64.zip
+        unzip Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_export_templates.tpz
+        mkdir -p ~/.local/share/godot/export_templates/${{ inputs.godot-version }}.${{ inputs.godot-channel }}
         mkdir -p ~/.config/godot
-        mkdir -p ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        unzip Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip
-        mv Godot_v${{ inputs.godot-version }}-stable_linux_headless.64 /usr/local/bin/godot
-        unzip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
-        mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.stable
-        rm -f Godot_v${{ inputs.godot-version }}-stable_linux_headless.64.zip Godot_v${{ inputs.godot-version }}-stable_export_templates.tpz
-        godot -e -q
+        unzip Godot_v${{ inputs.godot-version }}-${{ inouts.godot-channel }}_linux_headless.64.zip
+        mv Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_linux_headless.64 /usr/local/bin/godot
+        unzip Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_export_templates.tpz
+        mv templates/* ~/.local/share/godot/templates/${{ inputs.godot-version }}.${{ inputs.godot-channel }}
+        rm -f Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_linux_headless.64.zip Godot_v${{ inputs.godot-version }}-${{ inputs.godot-channel }}_export_templates.tpz
 
     - name: Create export presets config
       if: ${{ inputs.create-export-preset-cfg  == 'true' }}
