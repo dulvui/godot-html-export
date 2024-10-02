@@ -64,6 +64,11 @@ runs:
       shell: bash
       run: mkdir -p "$(dirname ${{ inputs.output-file-path }})"
 
+    - name: Open project once to import assets in editor mode
+      shell: bash
+      continue-on-error: true # timeout will exit with code 124
+      run: timeout 25 godot --path ${{ inputs.working-directory }} -e
+
     - name: Export
       shell: bash
       run: godot --path ${{ inputs.working-directory }} --export HTML5 ${{ inputs.output-file-path }}
